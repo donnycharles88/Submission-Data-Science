@@ -1,7 +1,7 @@
 # Submission-Data-Science
 ------
 
-# 📊 Proyek Akhir: Perusahaan Edutech - Jaya Jaya Institut
+# 📊 Proyek Akhir: Menyelesaikan Permasalahan Perusahaan Edutech - Jaya Jaya Institut
 
 ## 🎯 Business Understanding
 
@@ -89,7 +89,7 @@ Password: root123
 
 ## Screenshots
 
-![App Screenshot](donny_charles_88-dashboard.png)
+![App Screenshot](donny_charles_88-Dashboard.png)
 
 
 ## 🔗 Akses Dashboard
