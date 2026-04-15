@@ -89,7 +89,7 @@ Password: root123
 
 ## Screenshots
 
-![App Screenshot](donny_charles_88-dashboard.jpg)
+![App Screenshot](donny_charles_88-dashboard.png)
 
 
 ## 🔗 Akses Dashboard
