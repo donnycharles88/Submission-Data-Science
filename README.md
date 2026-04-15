@@ -1,7 +1,7 @@
 # Submission-Data-Science
 ------
 
-# 📊 Proyek Akhir: Perusahaan Edutech - Jaya Jaya Institut
+# 📊 Proyek Akhir: Menyelesaikan Permasalahan Perusahaan Edutech - Jaya Jaya Institut
 
 ## 🎯 Business Understanding
 
@@ -89,7 +89,7 @@ Password: root123
 
 ## Screenshots
 
-![App Screenshot](donny_charles_88-dashboard.jpg)
+![App Screenshot](donny_charles_88-Dashboard.png)
 
 
 ## 🔗 Akses Dashboard
@@ -231,32 +231,13 @@ Tabel di atas menunjukkan performa model Random Forest yang telah di-tuning dala
 
 ### 🎯 Rekomendasi Action Items
 
-1. **Intervensi Akademik Dini Berdasarkan Approval Rate**
-   Berdasarkan hasil analisis, `Approval_Rate_Sem2` adalah faktor paling berpengaruh (importance: 0.098). Mahasiswa dengan rasio kelulusan SKS < 70% di semester awal memiliki probabilitas dropout 3x lebih tinggi. Rekomendasi:
-   * Setup alert otomatis untuk mahasiswa dengan Approval Rate < 70% di minggu ke-8 semester.
-   * Wajibkan konseling akademik untuk mahasiswa dengan Grade Semester 1 < 10.0.
-   * Berikan program tutoring intensif untuk mata kuliah dengan tingkat kegagalan tertinggi.
-
-2. **Penguatan Sistem Pendukung Finansial**
-   Fitur `Debtor` (status tunggakan) berkontribusi signifikan terhadap risiko dropout (importance: 0.039). Mahasiswa dengan tunggakan pembayaran cenderung mengalami stres akademik dan sosial. Rekomendasi:
-   * Identifikasi mahasiswa dengan status `Debtor = Yes` dari dashboard Metabase.
-   * Tawarkan skema cicilan fleksibel atau beasiswa darurat berbasis performa akademik.
-   * Kolaborasi dengan lembaga keuangan untuk program pinjaman pendidikan bunga rendah.
-
-3. **Program Retensi Fase Kritis (Semester 1–2)**
-   Mahasiswa di semester awal adalah kelompok paling rentan dropout. Rekomendasi:
-   * Rancang program orientasi akademik 30 hari yang terstruktur untuk mahasiswa baru.
-   * Pasangkan sistem peer-mentoring: mahasiswa tingkat akhir membimbing mahasiswa baru.
-   * Lakukan monitoring progress bulanan melalui dashboard dengan KPI: Grade, Approval Rate, Attendance.
-
-4. **Implementasi Early Warning System dengan `app.py`**
-   Jalankan prototype `app.py` secara berkala untuk mengidentifikasi mahasiswa dengan prediksi Dropout (probabilitas > 60%). Dari 4.424 data mahasiswa, model mengidentifikasi pola risiko yang dapat diantisipasi. Rekomendasi:
-   * Integrasi model ke sistem akademik untuk screening otomatis setiap akhir semester.
-   * Prioritaskan intervensi berdasarkan kombinasi: probabilitas dropout tertinggi + Approval Rate terendah.
-   * Track efektivitas intervensi melalui dashboard: bandingkan dropout rate sebelum & sesudah program.
-
-5. **Optimalisasi Proses Seleksi & Penempatan**
-   `Admission_grade` (importance: 0.049) dan `Previous_qualification_grade` menunjukkan bahwa kualitas input mahasiswa berpengaruh terhadap kelulusan. Rekomendasi:
-   * Review kriteria seleksi penerimaan mahasiswa baru berdasarkan data historis kelulusan.
-   * Berikan placement test untuk penjurusan yang lebih sesuai dengan kompetensi awal mahasiswa.
-   * Siapkan program bridging course untuk mahasiswa dengan latar belakang akademik berbeda.
+1. **Early Warning System Akademik**
+Setup alert otomatis untuk mahasiswa dengan Approval Rate < 70% atau Grade Semester 1 < 10.0, diikuti konseling wajib dan program tutoring intensif.
+2. **Dukungan Finansial Targeted**
+Identifikasi mahasiswa debtor via dashboard, tawarkan skema cicilan fleksibel atau beasiswa darurat berbasis performa akademik.
+3. **Program Retensi Semester Awal**
+Implementasi orientasi 30 hari, peer-mentoring, dan monitoring bulanan dengan KPI: Grade, Approval Rate, Attendance untuk mahasiswa baru.
+4. **Integrasi Model Prediksi**
+Gunakan prototype app.py untuk screening otomatis setiap semester; prioritaskan intervensi pada mahasiswa dengan probabilitas dropout > 60%.
+5. **Optimalisasi Seleksi Masuk**
+Review kriteria penerimaan berdasarkan data historis, tambahkan placement test, dan siapkan bridging course untuk kesenjangan kompetensi.
