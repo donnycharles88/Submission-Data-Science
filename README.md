@@ -173,11 +173,11 @@ ls model/
 streamlit run app.py
 ```
 
-# 3. Akses di browser
-#    Buka: http://localhost:8501
+**3. Akses di browser**
+Buka: http://localhost:8501
 
 **🌐 Akses Prototype Cloud:**
-Link Streamlit Community Cloud: 
+Link Streamlit Community Cloud: [https://submission-data-science-ajqrxibkdc8avfcu8bydye.streamlit.app/](https://submission-data-science-ajqrxibkdc8avfcu8bydye.streamlit.app/)
 
 **📝 Cara Menggunakan Prototype:**
 1. Pilih menu "🔮 Prediksi Mahasiswa" di sidebar
