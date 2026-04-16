@@ -5,8 +5,20 @@
 
 ## 🎯 Business Understanding
 
-Jaya Jaya Institut merupakan institusi pendidikan tinggi yang telah berdiri sejak tahun 2000 dengan reputasi akademik yang baik. Namun, institusi ini menghadapi tantangan serius berupa tingginya angka putus studi (dropout) mahasiswa, mencapai 32.1% dari total 4.424 data mahasiswa. Tingginya angka dropout tidak hanya berdampak pada reputasi institusi, tetapi juga mengindikasikan inefisiensi dalam alokasi sumber daya pendampingan akademik. Jaya Jaya Institut membutuhkan pendekatan berbasis data untuk mendeteksi mahasiswa berisiko sejak dini agar dapat diberikan intervensi yang tepat sebelum memutuskan keluar dari perkuliahan.
 
+Jaya Jaya Institut merupakan institusi pendidikan tinggi yang telah berdiri sejak tahun 2000 dengan reputasi akademik yang baik. Namun, institusi ini menghadapi tantangan berupa sejumlah mahasiswa yang tidak menyelesaikan pendidikannya (dropout). 
+
+Tingginya angka dropout menjadi perhatian serius karena berdampak pada:
+- Reputasi institusi di mata masyarakat dan calon mahasiswa
+- Efisiensi alokasi sumber daya pendampingan akademik
+- Pencapaian target kelulusan institusi
+
+Oleh karena itu, Jaya Jaya Institut membutuhkan pendekatan berbasis data untuk:
+1. Mendeteksi mahasiswa yang berpotensi dropout sejak dini
+2. Mengidentifikasi faktor-faktor yang mempengaruhi keputusan mahasiswa
+3. Memberikan intervensi yang tepat sebelum mahasiswa memutuskan keluar
+
+Proyek ini bertujuan membangun sistem prediksi berbasis machine learning dan dashboard monitoring untuk mendukung pengambilan keputusan yang lebih efektif.
 
 ### Permasalahan Bisnis
 
@@ -27,16 +39,14 @@ Berdasarkan kondisi tersebut, permasalahan bisnis yang perlu diselesaikan adalah
 - Exploratory Data Analysis (EDA) untuk memahami pola akademik, demografi, dan hubungan antar variabel pada data mahasiswa
 - Identifikasi faktor dominan yang mempengaruhi status kelulusan (Dropout, Enrolled, Graduate) melalui analisis statistik dan feature importance
 - Pembangunan model klasifikasi Machine Learning (Logistic Regression, Random Forest, Gradient Boosting) dengan Random Forest terpilih sebagai model utama
-- **Pengembangan prototype aplikasi web (`app.py`) menggunakan Streamlit untuk prediksi status mahasiswa baru secara real-time**
+- Pengembangan prototype aplikasi web (`app.py`) menggunakan Streamlit untuk prediksi status mahasiswa baru secara real-time**
 - Pembuatan business dashboard interaktif menggunakan **Metabase** untuk monitoring performa akademik dan tingkat kelulusan per program studi
 - Rekomendasi actionable berbasis data untuk strategi intervensi dini dan peningkatan retensi mahasiswa
 
 **Batasan Proyek:**
 - Data yang digunakan terbatas pada 4.424 record mahasiswa dari institusi pendidikan tinggi
-- Model difokuskan pada prediksi multi-kelas: Dropout, Currently Enrolled, dan Graduate
+- Model difokuskan pada klasifikasi biner: Dropout vs Graduate (data Enrolled dieksklusi dari training karena belum memiliki label akhir)
 - Dashboard Metabase dijalankan secara lokal menggunakan Docker, sedangkan prototype ML di-deploy ke Streamlit Community Cloud
-- Akurasi model (~75%) masih dapat ditingkatkan dengan penambahan fitur non-akademik (seperti kesehatan mental, keterlibatan organisasi kampus, dll.) yang tidak tersedia dalam dataset saat ini
-
 ---
 
 ### Persiapan
@@ -56,6 +66,9 @@ Berdasarkan kondisi tersebut, permasalahan bisnis yang perlu diselesaikan adalah
 ```bash
 # 1. Ekstraksi Folder Zip
 cd Edutech
+
+# atau klon repositori langsung dari GitHub menggunakan perintah berikut:
+git clone https://github.com/donnycharles88/Submission-Data-Science.git
 
 # 2. Buat virtual environment (direkomendasikan)
 python -m venv venv
@@ -78,6 +91,15 @@ Dashboard telah dikonfigurasi sebelumnya dan database-nya disimpan dalam file `m
 # Pull dan jalankan Metabase dengan Docker
 docker pull metabase/metabase:latest
 docker run -d -p 3000:3000 --name metabase metabase/metabase:v0.59.5.2
+# Copy database Metabase yang sudah berisi dashboard ke container
+docker cp metabase.db.mv.db metabase:/metabase.db/metabase.db.mv.db
+
+# Copy file dataset CSV ke dalam container (cari dulu path-nya)
+docker exec metabase find /tmp -name "*.csv" 2>/dev/null
+docker cp data.csv metabase:/tmp/data.csv
+
+# Restart container agar perubahan aktif
+docker restart metabase
 ```
 ```
 Akses dashboard di: http://localhost:3000
@@ -92,13 +114,6 @@ Password: root123
 ![App Screenshot](donny_charles_88-Dashboard.png)
 
 
-## 🔗 Akses Dashboard
-```bash
-🌐 URL Lokal: http://localhost:3000
-👤 Username:  root@mail.com  
-🔑 Password:   root123
-```
-
 ## 🗂️ Struktur Dashboard
 Dashboard bisnis telah dikembangkan menggunakan Metabase untuk memberikan visibilitas menyeluruh terhadap performa mahasiswa. Dashboard ini menampilkan:
 ### Fitur Utama Dashboard:
@@ -107,16 +122,42 @@ Dashboard bisnis telah dikembangkan menggunakan Metabase untuk memberikan visibi
 | -------------------|-------------------|-------------------| 
 | Total Mahasiswa |Count of Row | Number chart |
 | Distribusi Status Akhir Mahasiswa | Count of Row by Status | Pie chart| 
-| Hubungan Usia Enrollment dengan Status Kelulusan | Count of Row by Age_at_enrollment (binning) + Status | Stack Bar chart |
+| Hubungan Usia Enrollment dengan Status Kelulusan | Count of Row by Age_at_enrollment + Status | Stack Bar chart |
 | Distribusi Gender per Status Akhir | Count of Row by Gender + Status | Bar chart |
 | Tingkat Dropout berdasarkan Prodi | Filter Status = 'Dropout', Count of Row by Course | Row chart |
 | Rata-rata SKS Lulus per Semester |Average of Curricular_units_1st_sem_approved + Curricular_units_2nd_sem_approved by Status | Line chart |
 | Analisis Mahasiswa dengan Kebutuhan Khusus | Count of Row by Educational_special_needs + Status | Bar chart |
 | Rata-rata Nilai Admission per Prodi |Average of Admission_grade by Course | Bar chart |
 
-## 🤖 Model Prediction - Panduan Penggunaan
+## 🤖 Menjalankan Sistem Machine Learning 
 
 Script `app.py` digunakan oleh HR untuk memprediksi risiko attrition karyawan baru atau existing.
+***Cara Menjalankan Prototype***
+**Langkah 1** — Pastikan model sudah ada di foler model: *student_status_model.pkl*, *scaler.pkl*
+```bash
+ls model/
+# Harus ada: student_status_model.pkl, scaler.pkl
+```
+
+**Langkah 2** — Jalankan aplikasi Streamlit
+```bash
+streamlit run app.py
+```
+
+**3. Akses di browser**
+Buka: http://localhost:8501
+
+**🌐 Akses Prototype Cloud:**
+Link Streamlit Community Cloud: https://submission-data-science-ajqrxibkdc8avfcu8bydye.streamlit.app/
+**📝 Cara Menggunakan Prototype:**
+1. Pilih menu "🔮 Prediksi Mahasiswa" di sidebar
+2. Isi data akademik mahasiswa:
+- Nilai Admission (0-200)
+- Rata-rata Nilai Semester 1 & 2 (0-20)
+- Jumlah SKS Diambil & Lulus per semester
+- Usia enrollment dan status debtor
+4. Klik tombol "🔮 Prediksi Status"
+5. Lihat hasil prediksi beserta probabilitas dan rekomendasi intervensi
 
 ### Format File Input
 
@@ -161,37 +202,12 @@ File harus memiliki **34 kolom berikut** (kolom `Attrition` boleh disertakan ata
 | YearsWithCurrManager | Integer | 2 |
 
 
-### Cara Penggunaan Step-by-Step
 
-**Langkah 1** — Pastikan model sudah ada di foler model: *student_status_model.pkl*, *scaler.pkl*, dan *label_encoder.pkl*
-```bash
-ls model/
-```
-
-**Langkah 2** — Jalankan aplikasi Streamlit
-```bash
-streamlit run app.py
-```
-
-**3. Akses di browser**
-Buka: http://localhost:8501
-
-**🌐 Akses Prototype Cloud:**
-Link Streamlit Community Cloud: [https://submission-data-science-ajqrxibkdc8avfcu8bydye.streamlit.app/](https://submission-data-science-ajqrxibkdc8avfcu8bydye.streamlit.app/)
-
-**📝 Cara Menggunakan Prototype:**
-1. Pilih menu "🔮 Prediksi Mahasiswa" di sidebar
-2. Isi data akademik mahasiswa:
-- Nilai Admission (0-200)
-- Rata-rata Nilai Semester 1 & 2 (0-20)
-- Jumlah SKS Diambil & Lulus per semester
-- Usia enrollment dan status debtor
-4. Klik tombol "🔮 Prediksi Status"
-5. Lihat hasil prediksi beserta probabilitas dan rekomendasi intervensi
 ---
 ## 📈 Conclusion
 
-Berdasarkan analisis data terhadap 1.470 karyawan, dapat disimpulkan bahwa tingkat employee attrition di perusahaan tidak terjadi secara acak, melainkan dipengaruhi oleh pola sistematis yang melibatkan faktor kompensasi, beban kerja, kepuasan karir, dan keseimbangan hidup.
+Berdasarkan analisis data terhadap 4.424 mahasiswa Jaya Jaya Institut, dapat disimpulkan bahwa tingkat dropout tidak terjadi secara acak, melainkan dipengaruhi oleh pola sistematis yang melibatkan performa akademik, kondisi finansial, dan faktor demografis mahasiswa.
+
 
 **Temuan Kunci**
 
@@ -202,14 +218,17 @@ Berdasarkan analisis data terhadap 1.470 karyawan, dapat disimpulkan bahwa tingk
 
 **Performa Model**
 
-| Metric | value | Interpretasi |
+| Metric | Value | Interpretasi |
 |---|---|---|
-| Accuracy | 0.776271 | Model dapat memprediksi dengan cukup baik |
-| F1-Score (Weighted) | 0.7860 |Performa seimbang untuk semua kelas |
-| Precision  | 0.7595 | Akurat memprediksi mahasiswa yang lulus |
-| Recall  | 0.84 | Cukup baik mendeteksi mahasiswa berisiko |
+| Accuracy | 0.9091 | Model memprediksi dengan sangat baik |
+| F1-Score (Weighted) | 0.9083 | Performa seimbang untuk semua kelas |
+| Precision | 0.9109 | Akurat dalam memprediksi status |
+| Recall | 0.9091 | Baik mendeteksi mahasiswa berisiko |
 
-Tabel di atas menunjukkan performa model Random Forest yang telah di-tuning dalam memprediksi status mahasiswa (Dropout, Enrolled, Graduate). Model mencapai akurasi sebesar 77.6% yang mengindikasikan bahwa model mampu memprediksi dengan cukup baik pada data testing. F1-Score Weighted sebesar 0.786 menunjukkan performa yang seimbang untuk ketiga kelas prediksi, dengan mempertimbangkan ketidakseimbangan jumlah data antar kelas. Precision sebesar 0.7595 menunjukkan bahwa ketika model memprediksi suatu kelas, tingkat keakuratannya cukup tinggi. Sementara itu, Recall sebesar 0.84 mengindikasikan bahwa model mampu mendeteksi dengan baik sebagian besar mahasiswa yang berisiko dropout, yang merupakan aspek kritis dalam sistem early warning. Secara keseluruhan, model ini layak digunakan sebagai alat bantu untuk mengidentifikasi mahasiswa yang memerlukan intervensi akademik lebih lanjut.
+Model dilatih menggunakan **3.630 data** (Dropout + Graduate), dengan data 
+Enrolled dieksklusi karena belum memiliki label akhir. Cross-Validation 
+5-fold menghasilkan rata-rata akurasi **91.05% ± 1.73%**.
+
 
 
 
